@@ -1,57 +1,30 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-
-
-## Loading and preprocessing the data
-```{r}
 data<-read.csv("C:/Documents and Settings/Samarth/RepData_PeerAssessment1/activity.csv")
 dataset<-data[!is.na(data$steps),]
-```
 
-```{r}
+#Total number of steps taken per day
+
 barplot(tapply(dataset$steps,dataset$date,sum))
-```
 
-## What is mean total number of steps taken per day?
-```{r}
 means<-tapply(dataset$steps,dataset$date,sum)
 means<-means[!is.na(means)]
 mean<-mean(means)
 mean
-```
 
-## What is median total number of steps taken per day?
-```{r}
 medians<-tapply(dataset$steps,dataset$date,sum)
 medians<-medians[!is.na(medians)]
 median<-median(medians)
 median
-```
 
-## What is the average daily activity pattern?
-```{r}
+#Average daily acivity pattern
 dataset_daily<-data[!duplicated(data$interval),]
 avg_steps=tapply(dataset$steps,dataset$interval,mean)
 plot(dataset_daily$interval,avg_steps,type='l')
-```
 
-## The 5 min interval containing, on avg, the maximum number of steps is:
-```{r}
 names(avg_steps[which.max(avg_steps)])
-```
 
-## Inputing missing values
-### The total number of missing values are
-```{r}
+#Input missing values
 sum(is.na(data$steps))
-```
 
-## Filled in missing values with mean for that 5 min interval
-```{r}
 avg_steps_frame<-data.frame(interval=names(avg_steps),avg_steps)
 dataset_input<-data
 for(i in 1:17568)
@@ -59,15 +32,9 @@ for(i in 1:17568)
     if(is.na(dataset_input[i,1]))
         dataset_input[i,1]<-avg_steps_frame[avg_steps_frame$interval==dataset_input[i,3],2]
 }
-```
 
-## The new data set is dataset_input
-```{r}
-head(dataset_input)
-```
+##barplot(tapply(dataset$steps,dataset$date,sum))
 
-## Histogram Plot and Mean, Median
-```{r}
 barplot(tapply(dataset_input$steps,dataset_input$date,sum))
 
 means_i<-tapply(dataset_input$steps,dataset_input$date,sum)
@@ -79,13 +46,8 @@ medians_i<-tapply(dataset_input$steps,dataset_input$date,sum)
 medians_i<-medians_i[!is.na(medians_i)]
 median_i<-median(medians_i)
 median_i
-```
 
-We Observe that the mean remains the same. However, the median increases a little.
-
-## Are there differences in activity patterns between weekdays and weekends?
-```{r}
-library(lattice)
+#Weekend vs Weekdays
 day<-character(0)
 for(i in 1:17568)
 {
@@ -123,4 +85,3 @@ steps_we<-cbind(steps_we,day="Weekend")
 steps_week<-rbind(steps_we,steps_wd)
 
 xyplot(steps_week$steps~steps_week$interval|steps_week$day,type='l')
-```
